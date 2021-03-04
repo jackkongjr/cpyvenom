@@ -67,8 +67,7 @@ def cpyvenom(inputfile,outputfile,payload,destination,block):
             for s in splitted_encoded:
                 text += """$EncodedString+="{0}" \n""".format(s)
             text += """$ByteArray = [System.Convert]::FromBase64String($EncodedString);\n[System.IO.File]::WriteAllBytes($FilePath, $ByteArray);\n"""
-            if not outputfile:
-                print (text)
+            
             
         
         if payload.lower()=="windows/certutil":
@@ -80,8 +79,7 @@ def cpyvenom(inputfile,outputfile,payload,destination,block):
             for s in splitted_encoded:
                 text += """echo {0} >> %Temp%\\{1}\n""".format(s,basename)
             text += """certutil -decode %Temp%\\{0} {1}\n""".format(basename,destination)
-            if not outputfile:
-                print (text)
+            
 
 
         if payload.lower()=="linux/bash":
@@ -93,8 +91,7 @@ def cpyvenom(inputfile,outputfile,payload,destination,block):
             for s in splitted_encoded:
                 text += """echo {0} >> /tmp/{1}\n""".format(s,basename)
             text += """base64 -d /tmp/{0} > {1}\nrm -f /tmp/{0}""".format(basename,destination)
-            if not outputfile:
-                print (text)
+            
 
 
         if payload.lower()=="linux/python":
@@ -107,17 +104,17 @@ def cpyvenom(inputfile,outputfile,payload,destination,block):
             text += """f = open("{0}", 'wb')\nf.write(decoded)\nf.close()\n""".format(destination)
 
 
-            if not outputfile:
-                print (text)
-            else:
-                try:
-                    f = open(destination,'w')
-                    f.write(text)
-                    f.close()
-                    print("\nGenerated file{0}\n ".format(destination))
-                except IOError:
-                    print("Output file not accessibile")
-                    exit(0)
+        if not outputfile:
+            print (text)
+        else:
+            try:
+                f = open(destination,'w')
+                f.write(text)
+                f.close()
+                print("\nGenerated file{0}\n ".format(destination))
+            except IOError:
+                print("Output file not accessibile")
+                exit(0)
 
 
         # Do something with the file
