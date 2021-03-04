@@ -37,7 +37,7 @@ Available commands:
     Example:
 
         windows:
-            cpyvenom -i nc.exe -o nc.cpyvenom -p winows/powershell -d "C:\\\\temp"
+            cpyvenom -i nc.exe -o nc.cpyvenom -p winows/powershell -d "C:\\temp"
 
         linux:
             cpyvenom -i /bin/nc -o nc.cpv -p linux/bash -d /tmp/nc
