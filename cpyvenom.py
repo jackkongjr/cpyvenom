@@ -108,7 +108,7 @@ def cpyvenom(inputfile,outputfile,payload,destination,block):
             print (text)
         else:
             try:
-                f = open(destination,'w')
+                f = open(outputfile,'w')
                 f.write(text)
                 f.close()
                 print("\nGenerated file{0}\n ".format(outputfile))
