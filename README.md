@@ -36,10 +36,10 @@ Available commands:
 
     Example:
 
-        windows:
+        convert a windows file:
             cpyvenom -i nc.exe -o nc.cpyvenom -p winows/powershell -d "C:\\temp"
 
-        linux:
+        convert a linux file:
             cpyvenom -i /bin/nc -o nc.cpv -p linux/bash -d /tmp/nc
 ```
 
