@@ -4,7 +4,7 @@
  
 * Yet another pentesting script
 
-* It convert a target file to transfer in base64 rows and generates convenient output
+* It converts a target file to transfer in base64 rows and generates convenient output
 
 
 ```
