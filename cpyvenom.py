@@ -111,7 +111,7 @@ def cpyvenom(inputfile,outputfile,payload,destination,block):
                 f = open(destination,'w')
                 f.write(text)
                 f.close()
-                print("\nGenerated file{0}\n ".format(destination))
+                print("\nGenerated file{0}\n ".format(outputfile))
             except IOError:
                 print("Output file not accessibile")
                 exit(0)
