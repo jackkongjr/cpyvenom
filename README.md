@@ -1,6 +1,8 @@
 
 
  ### Script to transfer files with a simple copy/paste from terminal when no other options are available
+ 
+* Yet another pentesting script
 
 * It convert a target file to transfer in base64 rows and generates convenient output
 
