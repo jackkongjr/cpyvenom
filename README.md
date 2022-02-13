@@ -30,17 +30,17 @@ Available commands:
 
     -o / --output-file      save output to file, default to stdout
 
-    -d / --destination      destination path in the remote system
+    -d / --destination      destination FULL PATH (folder + filename) in the remote system
 
     -b / --block            size of the block
 
     Example:
 
         convert a windows file:
-            cpyvenom -i nc.exe -o nc.cpyvenom -p winows/powershell -d "C:\\temp"
+            cpyvenom -i nc.exe -o nc.cpyvenom -p winows/powershell -d "C:\\temp\\nc.exe"
 
         convert a linux file:
-            cpyvenom -i /bin/nc -o nc.cpv -p linux/bash -d /tmp/nc
+            cpyvenom -i /bin/nc -o nc.cpv -p linux/bash -d /tmp/nc.elf
 ```
 
 
