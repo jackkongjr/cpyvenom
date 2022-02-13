@@ -30,7 +30,7 @@ Available commands:
 
     -o / --output-file      save output to file, default to stdout
 
-    -d / --destination      destination **FULL PATH (folder + filename)** in the remote system
+    -d / --destination      destination FULL PATH (folder + filename) in the remote system
 
     -b / --block            size of the block
 
