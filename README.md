@@ -8,7 +8,7 @@
 Added the possibility to upload file through DNS TXT record requests, the script will open a mini-dns server to serve the file in base64 chunks inside parametrized TXT-record response.
 
 **Prerequisites:**
-* **The port must be reachable from the internet**
+* **The IP address and the port must be reachable from the internet**
 * **To listen on port 53 you will need to execute the script as root.**
 * **it depends on dnslib**  
 
